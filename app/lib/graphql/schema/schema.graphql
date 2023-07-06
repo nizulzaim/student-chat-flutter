@@ -1,0 +1,497 @@
+type User {
+  _id: ObjectId!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  createdById: ObjectId!
+  updatedById: ObjectId!
+  firstName: String!
+  lastName: String!
+  email: String!
+  type: String!
+  timezone: String!
+  createdBy: User!
+  updatedBy: User!
+  displayName: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type PaginatedUsers {
+  items: [User!]!
+  count: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type LoginResult {
+  token: String!
+  user: User!
+}
+
+type Faculty {
+  _id: ObjectId!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  createdById: ObjectId!
+  updatedById: ObjectId!
+  name: String!
+  slug: String!
+  createdBy: User!
+  updatedBy: User!
+}
+
+type PaginatedFaculties {
+  items: [Faculty!]!
+  count: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type UserMeta {
+  userId: [ObjectId!]!
+  lastReadAt: DateTime!
+}
+
+type Conversation {
+  _id: ObjectId!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  createdById: ObjectId!
+  updatedById: ObjectId!
+  userIds: [ObjectId!]!
+  usersMeta: [UserMeta!]!
+  type: ConversationType!
+  lastMessageAt: DateTime
+  name: String
+  createdBy: User!
+  updatedBy: User!
+  users: [User!]!
+  numberOfUnread: Int!
+  semesterClass: SemesterClass
+}
+
+enum ConversationType {
+  private
+  group
+}
+
+type Message {
+  _id: ObjectId!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  createdById: ObjectId!
+  updatedById: ObjectId!
+  conversationId: ObjectId!
+  text: String!
+  createdBy: User!
+  updatedBy: User!
+}
+
+type PaginatedConversation {
+  items: [Conversation!]!
+  count: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type SemesterClass {
+  _id: ObjectId!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  createdById: ObjectId!
+  updatedById: ObjectId!
+  name: String!
+  subjectId: ObjectId!
+  lecturerId: ObjectId!
+  studentsId: [ObjectId!]!
+  semesterId: ObjectId!
+  conversationId: ObjectId
+  createdBy: User!
+  updatedBy: User!
+  semester: Semester!
+  subject: Subject!
+  lecturer: User!
+}
+
+type WeekDocument {
+  name: String!
+  attachmentId: ObjectId!
+  week: Int!
+  createdAt: DateTime!
+  createdBy: User!
+  updatedBy: User!
+  attachmentInfo: Attachment!
+}
+
+type Subject {
+  _id: ObjectId!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  createdById: ObjectId!
+  updatedById: ObjectId!
+  name: String!
+  code: String!
+  facultyId: ObjectId!
+  weekAttachments: [WeekDocument!]
+  createdBy: User!
+  updatedBy: User!
+  faculty: Faculty!
+}
+
+type Semester {
+  _id: ObjectId!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  createdById: ObjectId!
+  updatedById: ObjectId!
+  name: String!
+  startDate: DateTime!
+  endDate: DateTime!
+  createdBy: User!
+  updatedBy: User!
+}
+
+type PaginatedMessage {
+  items: [Message!]!
+  count: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type PaginatedSemesterClasses {
+  items: [SemesterClass!]!
+  count: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type PaginatedSemesters {
+  items: [Semester!]!
+  count: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type PaginatedSubjects {
+  items: [Subject!]!
+  count: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type Attachment {
+  _id: ObjectId!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isDeleted: Boolean!
+  createdById: ObjectId!
+  updatedById: ObjectId!
+  filename: String!
+  key: String!
+  mimeType: String!
+  size: Float!
+  isPublic: Boolean!
+  createdBy: User!
+  updatedBy: User!
+}
+
+"""Mongo Object Id Scalar"""
+scalar ObjectId
+
+type Query {
+  users(query: FindAllUsersInput!, sort: UsersSortArgs): PaginatedUsers!
+  user(query: FindOneUserInput!): User!
+  currentUser: User!
+  faculties(query: FindAllFacultiesInput!, sort: FacultiesSortArgs): PaginatedFaculties!
+  faculty(query: FindOneFacultyInput!): Faculty!
+  conversations(input: FindAllConversationsInput!, sort: ConversationsSortArgs!): PaginatedConversation!
+  conversation(input: FindOneConversationInput!): Conversation!
+  messages(input: FindAllMessagesInput!, sort: MessagesSortArgs!): PaginatedMessage
+  semesterClasses(query: FindAllSemesterClassesInput!, sort: SemesterClassesSortArgs): PaginatedSemesterClasses!
+  semesterClass(query: FindOneSemesterClassInput!): SemesterClass!
+  semesters(query: FindAllSemestersInput!, sort: SemestersSortArgs): PaginatedSemesters!
+  semester(query: FindOneSemesterInput!): Semester!
+  subjects(query: FindAllSubjectsInput!, sort: SubjectsSortArgs): PaginatedSubjects!
+  subject(query: FindOneSubjectInput!): Subject
+  getSignedAttachmentUrl(id: String): String
+}
+
+input FindAllUsersInput {
+  search: String = null
+  isActive: Boolean
+  type: UserType
+  page: Int = 1
+  limit: Int = 10
+}
+
+enum UserType {
+  ADMIN
+  LECTURER
+  STUDENT
+}
+
+input UsersSortArgs {
+  updatedAt: SortEnum
+  firstName: SortEnum
+  lastName: SortEnum
+  email: SortEnum
+}
+
+enum SortEnum {
+  ASC
+  DESC
+}
+
+input FindOneUserInput {
+  _id: ObjectId
+  email: String
+}
+
+input FindAllFacultiesInput {
+  search: String = null
+  isActive: Boolean
+  page: Int = 1
+  limit: Int = 10
+}
+
+input FacultiesSortArgs {
+  updatedAt: SortEnum
+  slug: SortEnum
+  name: SortEnum
+}
+
+input FindOneFacultyInput {
+  _id: ObjectId
+  slug: String
+}
+
+input FindAllConversationsInput {
+  search: String = null
+  userIds: ObjectId
+  page: Int = 1
+  limit: Int = 10
+}
+
+input ConversationsSortArgs {
+  updatedAt: SortEnum
+  firstName: SortEnum
+  lastName: SortEnum
+  email: SortEnum
+}
+
+input FindOneConversationInput {
+  _id: ObjectId
+}
+
+input FindAllMessagesInput {
+  search: String = null
+  userIds: ObjectId
+  page: Int = 1
+  limit: Int = 10
+  conversationId: ObjectId
+}
+
+input MessagesSortArgs {
+  updatedAt: SortEnum
+  firstName: SortEnum
+  lastName: SortEnum
+  email: SortEnum
+}
+
+input FindAllSemesterClassesInput {
+  search: String = null
+  isActive: Boolean
+  page: Int = 1
+  limit: Int = 10
+}
+
+input SemesterClassesSortArgs {
+  updatedAt: SortEnum
+}
+
+input FindOneSemesterClassInput {
+  _id: ObjectId
+  conversationId: ObjectId
+}
+
+input FindAllSemestersInput {
+  search: String = null
+  isActive: Boolean
+  page: Int = 1
+  limit: Int = 10
+}
+
+input SemestersSortArgs {
+  updatedAt: SortEnum
+  code: SortEnum
+  name: SortEnum
+}
+
+input FindOneSemesterInput {
+  _id: ObjectId
+  code: String
+  name: String
+}
+
+input FindAllSubjectsInput {
+  search: String = null
+  isActive: Boolean
+  page: Int = 1
+  limit: Int = 10
+}
+
+input SubjectsSortArgs {
+  updatedAt: SortEnum
+  code: SortEnum
+  name: SortEnum
+}
+
+input FindOneSubjectInput {
+  _id: ObjectId
+  code: String
+  name: String
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  loginWithPassword(input: LoginWithPasswordInput!): LoginResult!
+  createFaculty(input: CreateFacultyInput!): Faculty!
+  updateFaculty(input: UpdateFacultyInput!): Faculty!
+  createConversation(input: CreateConversationInput!): Conversation!
+  createMessage(input: CreateMessageInput!): Message!
+  createSemesterClass(input: CreateSemesterClassInput!): SemesterClass!
+  updateSemesterClass(input: UpdateSemesterClassInput!): SemesterClass!
+  createSemester(input: CreateSemesterInput!): Semester!
+  updateSemester(input: UpdateSemesterInput!): Semester!
+  createSubject(input: CreateSubjectInput!): Subject!
+  updateSubject(input: UpdateSubjectInput!): Subject!
+  updateSubjectAddDocument(input: UpdateSubjectAddDocument!): Subject!
+  uploadAttachment(file: Upload!): Attachment!
+  downloadSignedAttachmentUrl(id: String): String
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  isActive: Boolean = true
+  timezone: String = "Asia/Kuala_Lumpur"
+}
+
+input LoginWithPasswordInput {
+  email: String!
+  password: String!
+}
+
+input CreateFacultyInput {
+  name: String!
+  slug: String!
+  isActive: Boolean = true
+}
+
+input UpdateFacultyInput {
+  name: String
+  slug: String
+  isActive: Boolean = true
+  _id: ObjectId!
+}
+
+input CreateConversationInput {
+  userIds: [ObjectId!]!
+  type: ConversationType! = private
+  lastMessageAt: DateTime
+  name: String
+}
+
+input CreateMessageInput {
+  conversationId: ObjectId!
+  text: String!
+}
+
+input CreateSemesterClassInput {
+  semesterId: ObjectId!
+  subjectId: ObjectId!
+  lecturerId: ObjectId!
+  isActive: Boolean!
+  studentsId: [ObjectId!]!
+}
+
+input UpdateSemesterClassInput {
+  semesterId: ObjectId
+  subjectId: ObjectId
+  lecturerId: ObjectId
+  isActive: Boolean
+  studentsId: [ObjectId!]
+  _id: ObjectId!
+}
+
+input CreateSemesterInput {
+  name: String!
+  startDate: DateTime!
+  endDate: DateTime!
+  isActive: Boolean = true
+}
+
+input UpdateSemesterInput {
+  name: String
+  startDate: DateTime
+  endDate: DateTime
+  isActive: Boolean = true
+  _id: ObjectId!
+}
+
+input CreateSubjectInput {
+  name: String!
+  code: String!
+  facultyId: ObjectId!
+  isActive: Boolean = true
+}
+
+input UpdateSubjectInput {
+  name: String
+  code: String
+  facultyId: ObjectId
+  isActive: Boolean = true
+  _id: ObjectId!
+}
+
+input UpdateSubjectAddDocument {
+  _id: ObjectId!
+  week: Int!
+  attachmentId: ObjectId!
+  name: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+type Subscription {
+  conversationUpdated(userId: String!): Conversation!
+  messageAdded(conversationId: String!): Message!
+}

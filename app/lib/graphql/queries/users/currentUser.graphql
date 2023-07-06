@@ -1,0 +1,14 @@
+query CurrentUser {
+  currentUser {
+    _id
+    createdAt
+    email
+    firstName
+    displayName
+    isActive
+    lastName
+    timezone
+    updatedAt
+    type
+  }
+}
